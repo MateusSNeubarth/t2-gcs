@@ -1,17 +1,18 @@
-version: '3.8'
-
 services:
   app:
     build: .
     ports:
       - "8000:8000"
+    environment:
+      - DATABASE_URL=DATABASE_URL=postgres://root:rootpassword@db:5432/t2_gcs
+      - PORT=8080
     volumes:
       - .:/home/node/app
   db:
-    image: mysql:8.0.30-debian
+    image: postgres:15
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=rootpassword
+      - POSTGRES_DB=t2_gcs
     ports:
-      - "3306:3306"
-    volumes:
-      - ./.docker/mysql:/docker-entrypoint-initdb.d
+      - "5432:5432"

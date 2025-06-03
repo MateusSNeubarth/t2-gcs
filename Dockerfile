@@ -1,12 +1,15 @@
-FROM node:18.16.0-alpine3.17
+FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-RUN npm install --omit=dev
+COPY prisma ./prisma
+
+RUN npm install
+RUN npx prisma generate
 
 COPY . .
 
 EXPOSE 8080
 
-CMD [ "node", "server.js" ]
+CMD [ "npm", "start", "dev" ]

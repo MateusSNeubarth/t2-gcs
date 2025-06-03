@@ -1,28 +1,32 @@
-const db = require("../config/db");
+const { prisma } = require("../config/db");
 
 class User {
   static async create({ username, email, password }) {
-    const [result] = await db.query(
-      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-      [username, email, password]
-    );
-    return this.findById(result.insertId);
+    return prisma.user.create({
+      data: {
+        username,
+        email,
+        password,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+      },
+    });
   }
 
   static async findByEmail(email) {
-    const [rows] = await db.execute(`SELECT * FROM users WHERE email = ?`, [
-      email,
-    ]);
-    return rows[0] || null;
+    return prisma.user.findUnique({
+      where: { email }
+    });
   }
 
   static async findById(id) {
-    const [rows] = await db.execute(
-      "SELECT id, username, email FROM users WHERE id = ? LIMIT 1",
-      [id]
-    );
-
-    return rows[0] || null;
+    return prisma.user.findUnique({
+      where: { id },
+      select: { id: true, username: true, email: true }
+    });
   }
 }
 
