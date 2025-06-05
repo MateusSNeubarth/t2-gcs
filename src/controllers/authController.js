@@ -17,7 +17,7 @@ const register = async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
-    const user = prisma.user.create({
+    await prisma.user.create({
       data: {
         username,
         email,
@@ -27,7 +27,7 @@ const register = async (req, res) => {
 
     res
       .status(201)
-      .json({ message: "User registered successfully", data: user });
+      .json({ message: "User registered successfully"});
   } catch (error) {
     res.status(error.status || 500).json({
       success: false,

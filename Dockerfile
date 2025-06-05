@@ -1,15 +1,20 @@
-FROM node:18-alpine
+FROM node:18-alpine AS builder
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json ./
-COPY prisma ./prisma
-
 RUN npm install
-RUN npx prisma generate
 
 COPY . .
 
+RUN npx prisma generate
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app /app
+
 EXPOSE 8080
 
-CMD [ "npm", "start", "dev" ]
+CMD ["npm", "start", "dev"]
